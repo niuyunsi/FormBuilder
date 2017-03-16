@@ -7,6 +7,7 @@ import { DragDropContext } from 'react-dnd';
 import ShortText from './ShortText';
 import LongText from './LongText';
 import SingleSelector from './Fields/SingleSelector';
+import SingleSelectCheckbox from './Fields/SingleSelectCheckbox';
 import OrderedListInput from './Controls/OrderedListInput';
 
 const options: data.IField[] = [
@@ -24,6 +25,14 @@ const options: data.IField[] = [
         options: {
             selectOpts: ['a', 'b', 'c']
         }
+    },
+    {
+        label: 'Single select checkbox',
+        type: 'SingleSelectCheckbox',
+        options: {
+            label: 'Which city do you live in',
+            checkboxOpts: ['Bellevue', 'Seattle', 'Lynnwood', 'Kirkland'],
+        }
     }
 ];
 
@@ -38,7 +47,8 @@ interface IState {
 const registry = {
     ShortText,
     LongText,
-    SingleSelector
+    SingleSelector,
+    SingleSelectCheckbox,
 };
 
 class App extends React.Component<IProps, IState> {

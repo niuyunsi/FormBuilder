@@ -30,8 +30,12 @@ const options: data.IField[] = [
         label: 'Single select checkbox',
         type: 'SingleSelectCheckbox',
         options: {
-            label: 'Which city do you live in',
+            label: 'Which city do you live in?',
             checkboxOpts: ['Bellevue', 'Seattle', 'Lynnwood', 'Kirkland'],
+            otherOpt: {
+                label: 'Other city',
+                hint: 'Please enter city name',
+            }
         }
     }
 ];

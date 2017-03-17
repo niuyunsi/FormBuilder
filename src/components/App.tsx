@@ -7,8 +7,9 @@ import { DragDropContext } from 'react-dnd';
 import ShortText from './ShortText';
 import LongText from './LongText';
 import SingleSelector from './Fields/SingleSelector';
-import SingleSelectCheckbox from './Fields/SingleSelectCheckbox';
+import SingleSelectorOptionEditor from './Fields/SingleSelectorOptionEditor'
 import OrderedListInput from './Controls/OrderedListInput';
+import FieldOptionEditor from './FieldOptionEditor'
 
 const options: data.IField[] = [
     {
@@ -25,18 +26,6 @@ const options: data.IField[] = [
         options: {
             selectOpts: ['a', 'b', 'c']
         }
-    },
-    {
-        label: 'Single select checkbox',
-        type: 'SingleSelectCheckbox',
-        options: {
-            label: 'Which city do you live in?',
-            checkboxOpts: ['Bellevue', 'Seattle', 'Lynnwood', 'Kirkland'],
-            otherOpt: {
-                label: 'Other city',
-                hint: 'Please enter city name',
-            }
-        }
     }
 ];
 
@@ -45,14 +34,13 @@ interface IProps {
 
 interface IState {
     fields: data.IField[],
-    options: Array<string>,
+    selectedField: data.IField,
 }
 
-const registry = {
-    ShortText,
-    LongText,
-    SingleSelector,
-    SingleSelectCheckbox,
+const registry: data.FieldRegistry = {
+    'ShortText': { render: ShortText },
+    'LongText': { render: LongText },
+    'SingleSelector': { render: SingleSelector, editor: SingleSelectorOptionEditor },
 };
 
 class App extends React.Component<IProps, IState> {
@@ -61,15 +49,15 @@ class App extends React.Component<IProps, IState> {
         this.onChangeFields = this.onChangeFields.bind(this);
         this.onEditField = this.onEditField.bind(this);
         this.onDeleteField = this.onDeleteField.bind(this);
-        this.onOptionsChanged = this.onOptionsChanged.bind(this);
+        this.onFieldOptionChanged = this.onFieldOptionChanged.bind(this);
         this.state = {
             fields: [],
-            options: ['string', 'int', 'boolean'],
+            selectedField: null,
         };
     }
 
     private onEditField(field: data.IField) {
-        alert('editing field ' + field.type);
+        this.setState({ selectedField: field } as IState);
     }
 
     private onDeleteField(fields: data.IField[]) {
@@ -80,14 +68,20 @@ class App extends React.Component<IProps, IState> {
         this.setState({ fields } as IState);
     }
 
-    private onOptionsChanged(options: Array<string>) {
-        this.setState({ options: options } as IState)
+    private onFieldOptionChanged(field: data.IField) {
+        const index = this.state.fields.indexOf(this.state.selectedField);
+        const fields = this.state.fields.slice();
+        fields[index] = field;
+
+        console.log(index, field, fields);
+        this.setState({ selectedField: field, fields } as IState);
     }
 
     render() {
+        const form = JSON.stringify(this.state.fields);
+
         return (
             <div>
-                <OrderedListInput options={this.state.options} optionsChanged={this.onOptionsChanged} />
                 <FieldSelector
                     fields={options}
                 />
@@ -99,6 +93,17 @@ class App extends React.Component<IProps, IState> {
                     registry={registry}
                     fields={this.state.fields}
                 />
+
+                <FieldOptionEditor
+                    registry={registry}
+                    field={this.state.selectedField}
+                    onChange={this.onFieldOptionChanged}
+                />
+
+                <div>
+                    <div>Debug: Form definitions</div>
+                    <textarea style={{width: 500}} readOnly value={form} />
+                </div>
             </div>
         );
     }

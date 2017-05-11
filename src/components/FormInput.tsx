@@ -19,6 +19,10 @@ export interface IFormInputProps {
     attempt?: boolean;
 
     onChange: (value: any, state: data.IFormState) => void;
+
+    // createButton is consumed by the NestedFormInput so that
+    // i18n strings can be displayed. If not provided, it defaults to English "Create".
+    createButton?: data.IEditableControlSource;
 }
 
 export class FormInput extends React.PureComponent<IFormInputProps, {}> {
@@ -56,7 +60,8 @@ export class FormInput extends React.PureComponent<IFormInputProps, {}> {
             onValueChange: this.onValueChanged,
             ref: (input: any) => {
                 this.fieldInputs[index] = input
-            }
+            },
+            createButton: this.props.createButton
         };
 
         const component = React.createElement(fieldDef.input, fieldInputProps);

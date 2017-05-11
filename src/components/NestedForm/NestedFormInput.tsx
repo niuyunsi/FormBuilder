@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames'
 import * as assign from 'object-assign';
 import * as data from '../../data';
 
@@ -30,7 +31,7 @@ export class NestedFormInput extends React.PureComponent<data.IFieldInputProps, 
         return (
             <div className='form-input-nested'>
                 <div className='form-input-nested-label'>{this.props.field.label}</div>
-                <button type='button' onClick={this.onCreateEntry}>Create</button>
+                {this.renderCreateButton()}
                 {this.props.value.map(this.renderEntry)}
             </div>
         );
@@ -53,7 +54,9 @@ export class NestedFormInput extends React.PureComponent<data.IFieldInputProps, 
         );
     }
 
-    private onCreateEntry() {
+    private onCreateEntry(event: React.MouseEvent<HTMLElement>) {
+        event.stopPropagation();
+        event.preventDefault();
         let entries = this.props.value.slice();
         entries.push({});
         this.props.onValueChange(this.props.field, entries, this.fieldStatus);
@@ -84,6 +87,24 @@ export class NestedFormInput extends React.PureComponent<data.IFieldInputProps, 
         })
 
         this.fieldStatus.error = error ? 'nestedError' : '';
+    }
+
+    private renderCreateButton() {
+        const source = this.props.createButton;
+        if (!source || typeof source === 'string') {
+            return (
+                <button type='button' className='form-input-nested-button form-input-nested-create-button' onClick={this.onCreateEntry}>
+                    {source || 'Create'}
+                </button>
+            )
+        }
+
+        if (React.isValidElement(source)) {
+            return React.cloneElement(source, {
+                onClick: this.onCreateEntry,
+                className: classNames(source.props.className, 'form-input-nested-button form-input-nested-create-button')
+            })
+        }
     }
 }
 

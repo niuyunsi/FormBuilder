@@ -1,6 +1,7 @@
 import { IField } from './IField';
 import { IFieldState } from './IFormState';
 import { FieldRegistry } from './FieldRegistry';
+import { IEditableControlSource } from './IEditableControlSource';
 
 export interface IFieldInputProps {
     registry: FieldRegistry;
@@ -16,6 +17,8 @@ export interface IFieldInputProps {
     context: any;
     // The callback when the value has been changed.
     onValueChange: (field: IField, value: any, fieldStatus: IFieldState) => void;
+
+    createButton: IEditableControlSource;
 }
 
 export interface IGenericFieldInputProps<T extends IField, V> extends IFieldInputProps {
